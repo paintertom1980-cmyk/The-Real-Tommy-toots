@@ -67,17 +67,36 @@ footer{padding:20px;background:#000;opacity:0.6;border-top:3px dashed hotpink;}
 
 <footer>© The Real Tommy Toots — somehow still allowed on the internet</footer>
 
-<audio id="pop" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
-<audio id="weird" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
+
+
 
 <script>
-// Unlock sound for iPhone
-function enableSound(){
-    const pop=document.getElementById("pop");
-    const weird=document.getElementById("weird");
-    pop.play().then(()=>pop.pause()).catch(()=>{});
-    weird.play().then(()=>weird.pause()).catch(()=>{});
-    alert("Sound unlocked! Now your buttons make noise!");
+// Create sound using vibration + tone (iPhone friendly)
+function playSound(type){
+    try {
+        // vibration (works on some devices)
+        if (navigator.vibrate) navigator.vibrate(50);
+
+        // create beep sound
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        oscillator.type = "square";
+        oscillator.frequency.value = type === "weird" ? 200 : 600;
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start();
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            ctx.currentTime + 0.2
+        );
+    } catch(e) {
+        console.log("Sound blocked", e);
+    }
 }
 
 // Jokes
