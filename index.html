@@ -143,9 +143,30 @@ function insultMe(){
 }
 
 // Play sounds
-function playSound(name){
-    const audio=document.getElementById(name);
-    if(audio) audio.play();
+function playSound(type){
+    try {
+        if (navigator.vibrate) navigator.vibrate(50);
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        oscillator.type = "square";
+        oscillator.frequency.value = type === "weird" ? 200 : 600;
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start();
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            ctx.currentTime + 0.2
+        );
+    } catch(e) {
+        console.log("Sound blocked", e);
+    }
+
 }
 
 // Flash background chaos
