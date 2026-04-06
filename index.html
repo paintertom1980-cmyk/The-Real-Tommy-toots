@@ -70,20 +70,28 @@ button:hover {
 }
 
 /* FART CLOUD */
-.fart-cloud {
-    position: fixed;
-    left: -300px;
-    top: 30%;
-    background: radial-gradient(circle, #b6ffb6, #5cff5c);
-    color: black;
-    padding: 20px;
-    border-radius: 50px;
-    font-weight: bold;
-    box-shadow: 0 0 25px lime;
-    z-index: 999;
-    max-width: 260px;
-    pointer-events: none;
-    animation: fartMove 9s ease-out forwards;
+function createCloud(text){
+    const cloud = document.createElement("div");
+
+    const sizeClass = Math.random() > 0.7 ? "fart-big" : "fart-small";
+    cloud.className = "fart-cloud " + sizeClass;
+
+    // Set animation duration to match pause + total time
+    cloud.style.animation = "fartMove 15s ease-out forwards"; // fast in, pause 10s, out
+
+    cloud.style.top = Math.random() * 70 + "%";
+    cloud.innerHTML = "💨 " + text + " 💨";
+
+    document.body.appendChild(cloud);
+
+    // Fart sound on start
+    if(sizeClass === "fart-big"){
+        playFart("big");
+    } else {
+        playFart("small");
+    }
+
+    setTimeout(()=>cloud.remove(), 15000);
 }
 
 .fart-small { transform: scale(0.7); opacity: 0.8; }
