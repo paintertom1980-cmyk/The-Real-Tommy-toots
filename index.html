@@ -72,36 +72,64 @@ button:hover {
 /* FART CLOUD */
 function createCloud(text){
     const cloud = document.createElement("div");
-
     const sizeClass = Math.random() > 0.7 ? "fart-big" : "fart-small";
     cloud.className = "fart-cloud " + sizeClass;
-
-    // Set animation duration to match pause + total time
-    cloud.style.animation = "fartMove 15s ease-out forwards"; // fast in, pause 10s, out
-
     cloud.style.top = Math.random() * 70 + "%";
     cloud.innerHTML = "💨 " + text + " 💨";
-
     document.body.appendChild(cloud);
 
-    // Fart sound on start
-    if(sizeClass === "fart-big"){
-        playFart("big");
-    } else {
-        playFart("small");
-    }
+    // Play fart sound
+    playFart(sizeClass === "big" ? "big" : "small");
 
-    setTimeout(()=>cloud.remove(), 15000);
+    let pos = -300; // start offscreen
+    const center = window.innerWidth / 2 - 130; // approx center
+    const end = window.innerWidth + 300;
+
+    // SPEEDS
+    const speedIn = 15; // px per frame
+    const speedOut = 5; // px per frame
+
+    // STEP 1: Move fast to center
+    const moveIn = setInterval(()=>{
+        pos += speedIn;
+        if(pos >= center){
+            pos = center;
+            cloud.style.left = pos + "px";
+            clearInterval(moveIn);
+
+            // STEP 2: Pause 10 seconds
+            setTimeout(()=>{
+                // STEP 3: Move out slowly
+                const moveOut = setInterval(()=>{
+                    pos += speedOut;
+                    cloud.style.left = pos + "px";
+                    if(pos >= end){
+                        clearInterval(moveOut);
+                        cloud.remove();
+                    }
+                }, 20);
+            }, 10000); // 10 second pause
+        }
+        cloud.style.left = pos + "px";
+    }, 20);
+
+    // Pause on hover
+    cloud.addEventListener("mouseenter", ()=>{clearInterval(moveIn);});
 }
 
-.fart-small { transform: scale(0.7); opacity: 0.8; }
-.fart-big { transform: scale(1.3); box-shadow: 0 0 40px lime; }
-
-@keyframes fartMove {
-    0% { left: -300px; opacity: 0; transform: scale(0.6) rotate(-10deg); }
-    20% { left: 40%; opacity: 1; transform: scale(1.1) rotate(5deg); }
-    60% { left: 40%; opacity: 1; transform: scale(1.1) rotate(0deg); } /* pause in center */
-    100% { left: 110%; opacity: 0; transform: scale(0.9) rotate(10deg); }
+    .fart-cloud {
+    position: fixed;
+    left: -300px;
+    top: 30%;
+    background: radial-gradient(circle, #b6ffb6, #5cff5c);
+    color: black;
+    padding: 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 0 25px lime;
+    z-index: 999;
+    max-width: 260px;
+    pointer-events: none;
 }
 
 /* SCREEN SHAKE */
