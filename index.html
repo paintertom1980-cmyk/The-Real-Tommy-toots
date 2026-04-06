@@ -30,7 +30,7 @@ footer{padding:20px;background:#000;opacity:0.6;border-top:3px dashed hotpink;}
 <header>
 <h1>The Real Tommy Toots</h1>
 <div class="tagline">Professional nonsense distributor. Slightly unhinged.</div>
-<button onclick="enableSound()">Enable Sound 🔊</button>
+
 </header>
 
 <section>
@@ -71,33 +71,7 @@ footer{padding:20px;background:#000;opacity:0.6;border-top:3px dashed hotpink;}
 
 
 <script>
-// Create sound using vibration + tone (iPhone friendly)
-function playSound(type){
-    try {
-        // vibration (works on some devices)
-        if (navigator.vibrate) navigator.vibrate(50);
 
-        // create beep sound
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        oscillator.type = "square";
-        oscillator.frequency.value = type === "weird" ? 200 : 600;
-
-        oscillator.connect(gain);
-        gain.connect(ctx.destination);
-
-        oscillator.start();
-
-        gain.gain.exponentialRampToValueAtTime(
-            0.0001,
-            ctx.currentTime + 0.2
-        );
-    } catch(e) {
-        console.log("Sound blocked", e);
-    }
-}
 
 // Jokes
 function addJoke(){
@@ -145,9 +119,8 @@ function insultMe(){
 // Play sounds
 function playSound(type){
     try {
-        if (navigator.vibrate) navigator.vibrate(50);
-
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
         const oscillator = ctx.createOscillator();
         const gain = ctx.createGain();
 
@@ -157,16 +130,16 @@ function playSound(type){
         oscillator.connect(gain);
         gain.connect(ctx.destination);
 
+        gain.gain.setValueAtTime(1, ctx.currentTime);
+
         oscillator.start();
 
-        gain.gain.exponentialRampToValueAtTime(
-            0.0001,
-            ctx.currentTime + 0.2
-        );
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        oscillator.stop(ctx.currentTime + 0.25);
+
     } catch(e) {
         console.log("Sound blocked", e);
     }
-
 }
 
 // Flash background chaos
