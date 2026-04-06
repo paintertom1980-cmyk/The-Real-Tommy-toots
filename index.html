@@ -13,7 +13,6 @@ body {
     color:white;
     overflow-x:hidden;
     background: linear-gradient(135deg,#1a1a1a,#333);
-    transition: background 0.5s;
 }
 
 /* HEADER */
@@ -30,19 +29,10 @@ header {
 
 h1 {
     font-size:3em;
-    margin:0;
     color:hotpink;
-    text-shadow:2px 2px purple;
 }
 
-.tagline {
-    font-size:1.2em;
-    opacity:0.8;
-    font-weight:bold;
-}
-
-section { padding:40px 20px; }
-
+/* BUTTONS */
 button {
     padding:10px 20px;
     border:none;
@@ -51,11 +41,6 @@ button {
     border-radius:5px;
     cursor:pointer;
     margin:10px;
-    transition:0.3s;
-}
-button:hover {
-    background:deeppink;
-    transform:scale(1.2) rotate(5deg);
 }
 
 /* MOVING BUTTON */
@@ -70,135 +55,21 @@ button:hover {
 }
 
 /* FART CLOUD */
-function createCloud(text){
-    const cloud = document.createElement("div");
-
-    const isBig = Math.random() > 0.7;
-    const sizeClass = isBig ? "fart-big" : "fart-small";
-
-    cloud.className = "fart-cloud " + sizeClass;
-    cloud.style.top = Math.random() * 70 + "%";
-    cloud.style.left = "-300px";
-    cloud.innerHTML = "💨 " + text + " 💨";
-
-    document.body.appendChild(cloud);
-
-    // Play correct fart sound
-    playFart(isBig ? "big" : "small");
-
-    let pos = -300;
-    const center = window.innerWidth / 2 - 130;
-    const end = window.innerWidth + 300;
-
-    let moveInInterval;
-    let moveOutInterval;
-    let paused = false;
-
-    function moveIn(){
-        moveInInterval = setInterval(()=>{
-            if(paused) return;
-
-            pos += 20;
-            cloud.style.left = pos + "px";
-
-            if(pos >= center){
-                clearInterval(moveInInterval);
-
-                // PAUSE 10 SECONDS
-                setTimeout(()=>{
-                    moveOut();
-                }, 10000);
-            }
-        }, 20);
-    }
-
-    function moveOut(){
-        moveOutInterval = setInterval(()=>{
-            if(paused) return;
-
-            pos += 6;
-            cloud.style.left = pos + "px";
-
-            if(pos >= end){
-                clearInterval(moveOutInterval);
-                cloud.remove();
-            }
-        }, 20);
-    }
-
-    // Hover pause (WORKS NOW)
-    cloud.addEventListener("mouseenter", ()=> paused = true);
-    cloud.addEventListener("mouseleave", ()=> paused = false);
-
-    moveIn();
+.fart-cloud {
+    position: fixed;
+    left: -300px;
+    background: radial-gradient(circle, #b6ffb6, #5cff5c);
+    color: black;
+    padding: 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 0 25px lime;
+    z-index: 999;
+    max-width: 260px;
 }
 
-    // Play fart sound
-    playFart(sizeClass === "big" ? "big" : "small");
-
-    let pos = -300; // start offscreen
-    const center = window.innerWidth / 2 - 130; // approx center
-    const end = window.innerWidth + 300;
-
-    // SPEEDS
-    const speedIn = 15; // px per frame
-    const speedOut = 5; // px per frame
-
-    // STEP 1: Move fast to center
-    const moveIn = setInterval(()=>{
-        pos += speedIn;
-        if(pos >= center){
-            pos = center;
-            cloud.style.left = pos + "px";
-            clearInterval(moveIn);
-
-            // STEP 2: Pause 10 seconds
-            setTimeout(()=>{
-                // STEP 3: Move out slowly
-                const moveOut = setInterval(()=>{
-                    pos += speedOut;
-                    cloud.style.left = pos + "px";
-                    if(pos >= end){
-                        clearInterval(moveOut);
-                        cloud.remove();
-                    }
-                }, 20);
-            }, 10000); // 10 second pause
-        }
-        cloud.style.left = pos + "px";
-    }, 20);
-
-    // Pause on hover
-    cloud.addEventListener("mouseenter", ()=>{clearInterval(moveIn);});
-}
-
-    function playFart(size){
-    const small = [
-        "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
-        "https://www.myinstants.com/media/sounds/fart.mp3"
-    ];
-
-    const big = [
-        "https://www.myinstants.com/media/sounds/fart-with-reverb.mp3"
-    ];
-
-    const sounds = size === "big" ? big : small;
-
-    const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
-    audio.volume = 0.5;
-    audio.play().catch(()=>{});
-}
-}
-
-/* SCREEN SHAKE */
-@keyframes screenShake {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(-5px,5px); }
-    50% { transform: translate(5px,-5px); }
-    75% { transform: translate(-5px,-5px); }
-    100% { transform: translate(0,0); }
-}
-.shake { animation: screenShake 0.3s; }
+.fart-small { transform: scale(0.8); }
+.fart-big { transform: scale(1.3); box-shadow:0 0 40px lime; }
 
 /* CHAOS MODE */
 .chaos-mode {
@@ -211,19 +82,6 @@ function createCloud(text){
     75% { background: yellow; }
     100% { background: purple; }
 }
-
-/* POPUP */
-#tipPopup {
-    display:none;
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    background:hotpink;
-    padding:30px;
-    border-radius:20px;
-    z-index:1000;
-}
 </style>
 </head>
 
@@ -231,18 +89,17 @@ function createCloud(text){
 
 <header>
 <h1>The Real Tommy Toots</h1>
-<div class="tagline">Professional nonsense distributor. Slightly unhinged.</div>
+<div>Professional nonsense distributor. Slightly unhinged.</div>
 </header>
 
 <section>
 <h2>Chaos Controls</h2>
 
-<button class="moving" onclick="addJoke(); chaosFlash(); playSound();">
+<button class="moving" onclick="addJoke()">
 💨 Add Chaos
 </button>
 
 <button onclick="insultMe()">Insult Me 😈</button>
-
 <button onclick="toggleChaosMode()">⚠️ DO NOT CLICK</button>
 
 <p id="insultText"></p>
@@ -256,60 +113,97 @@ function createCloud(text){
 </a>
 </section>
 
-<div id="tipPopup">
-<h2>Did you laugh?</h2>
-<button onclick="hideTip()">Close</button>
-</div>
-
-<footer>© Tommy Toots — still not banned</footer>
-
 <script>
 
 /* VISITORS */
-let visits = Math.floor(Math.random()*1000)+50;
-document.getElementById("visitorCount").textContent="Visitors online: "+visits;
+document.getElementById("visitorCount").textContent =
+"Visitors online: " + (Math.floor(Math.random()*1000)+50);
 
 /* JOKES */
 function addJoke(){
-
     const jokes=[
-        "I tried to be normal once. Worst 6 minutes of my life.",
-        "My personality is 60% jokes and 40% confusion.",
-        "I’m not chaotic. I’m aggressively creative.",
-        "If life gives you lemons… question the lemons.",
+        "I tried to be normal once. Worst 6 minutes.",
         "I have inner raccoons.",
         "Chaos is mandatory.",
-        "Nothing is sacred… except naps."
+        "Nothing is sacred… except naps.",
+        "Aggressively creative. Not chaotic.",
+        "Question the lemons."
     ];
 
-    const chaos = Math.random();
-
     createCloud(jokes[Math.floor(Math.random()*jokes.length)]);
-
-    if(chaos > 0.7){
-        setTimeout(()=>createCloud(jokes[Math.floor(Math.random()*jokes.length)]),200);
-        setTimeout(()=>createCloud(jokes[Math.floor(Math.random()*jokes.length)]),400);
-    }
-
-    if(chaos > 0.9){
-        for(let i=0;i<5;i++){
-            setTimeout(()=>createCloud("💨 CHAOS OVERLOAD 💨"), i*150);
-        }
-        shakeScreen();
-    }
 }
 
-/* CLOUD */
+/* CLOUD SYSTEM */
 function createCloud(text){
     const cloud = document.createElement("div");
 
-    cloud.className = "fart-cloud " + (Math.random()>0.7 ? "fart-big" : "fart-small");
+    const isBig = Math.random() > 0.7;
+    cloud.className = "fart-cloud " + (isBig ? "fart-big" : "fart-small");
+
     cloud.style.top = Math.random()*70 + "%";
     cloud.innerHTML = "💨 " + text + " 💨";
 
     document.body.appendChild(cloud);
 
-    setTimeout(()=>cloud.remove(),2500);
+    playFart(isBig ? "big" : "small");
+
+    let pos = -300;
+    const center = window.innerWidth/2 - 130;
+    const end = window.innerWidth + 300;
+
+    let paused = false;
+
+    // MOVE IN FAST
+    const moveIn = setInterval(()=>{
+        if(paused) return;
+
+        pos += 20;
+        cloud.style.left = pos + "px";
+
+        if(pos >= center){
+            clearInterval(moveIn);
+
+            // PAUSE 10 SECONDS
+            setTimeout(()=>moveOut(), 10000);
+        }
+    },20);
+
+    // MOVE OUT
+    function moveOut(){
+        const moveOutInt = setInterval(()=>{
+            if(paused) return;
+
+            pos += 6;
+            cloud.style.left = pos + "px";
+
+            if(pos >= end){
+                clearInterval(moveOutInt);
+                cloud.remove();
+            }
+        },20);
+    }
+
+    // HOVER PAUSE
+    cloud.addEventListener("mouseenter", ()=> paused=true);
+    cloud.addEventListener("mouseleave", ()=> paused=false);
+}
+
+/* FART SOUND */
+function playFart(size){
+    const small=[
+        "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
+        "https://www.myinstants.com/media/sounds/fart.mp3"
+    ];
+
+    const big=[
+        "https://www.myinstants.com/media/sounds/fart-with-reverb.mp3"
+    ];
+
+    const sounds = size==="big" ? big : small;
+
+    const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
+    audio.volume = 0.5;
+    audio.play().catch(()=>{});
 }
 
 /* INSULT */
@@ -317,58 +211,19 @@ function insultMe(){
     const insults=[
         "You fight like a dairy farmer!",
         "Your secrets are boring.",
-        "That face is a bold choice.",
         "You bring joy… when you leave.",
-        "Silence would improve your brand."
+        "That face is a bold choice."
     ];
-
     document.getElementById("insultText").textContent =
         insults[Math.floor(Math.random()*insults.length)];
 }
 
 /* CHAOS MODE */
-let chaosOn = false;
 function toggleChaosMode(){
-    chaosOn = !chaosOn;
-
     document.body.classList.toggle("chaos-mode");
-
-    if(chaosOn){
-        alert("You did this. There is no going back.");
-    }
-}
-
-/* SHAKE */
-function shakeScreen(){
-    document.body.classList.add("shake");
-    setTimeout(()=>document.body.classList.remove("shake"),300);
-}
-
-/* FLASH */
-function chaosFlash(){
-    const colors=["#ff00ff","#00ffff","#ffff00","#ff6600","#00ff00","#ff0066"];
-    document.body.style.background =
-        `linear-gradient(135deg, ${colors[Math.floor(Math.random()*colors.length)]}, ${colors[Math.floor(Math.random()*colors.length)]})`;
-}
-
-/* SOUND */
-function playSound(){
-    const sounds = [
-        "https://www.myinstants.com/media/sounds/fart-with-reverb.mp3",
-        "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
-        "https://www.myinstants.com/media/sounds/fart.mp3"
-    ];
-
-    const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
-    audio.volume = 0.4;
-    audio.play().catch(()=>{});
-}
-
-function hideTip(){
-    document.getElementById("tipPopup").style.display="none";
 }
 
 </script>
 
 </body>
-</html
+</html>
