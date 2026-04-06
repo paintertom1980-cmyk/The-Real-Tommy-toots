@@ -72,11 +72,66 @@ button:hover {
 /* FART CLOUD */
 function createCloud(text){
     const cloud = document.createElement("div");
-    const sizeClass = Math.random() > 0.7 ? "fart-big" : "fart-small";
+
+    const isBig = Math.random() > 0.7;
+    const sizeClass = isBig ? "fart-big" : "fart-small";
+
     cloud.className = "fart-cloud " + sizeClass;
     cloud.style.top = Math.random() * 70 + "%";
+    cloud.style.left = "-300px";
     cloud.innerHTML = "💨 " + text + " 💨";
+
     document.body.appendChild(cloud);
+
+    // Play correct fart sound
+    playFart(isBig ? "big" : "small");
+
+    let pos = -300;
+    const center = window.innerWidth / 2 - 130;
+    const end = window.innerWidth + 300;
+
+    let moveInInterval;
+    let moveOutInterval;
+    let paused = false;
+
+    function moveIn(){
+        moveInInterval = setInterval(()=>{
+            if(paused) return;
+
+            pos += 20;
+            cloud.style.left = pos + "px";
+
+            if(pos >= center){
+                clearInterval(moveInInterval);
+
+                // PAUSE 10 SECONDS
+                setTimeout(()=>{
+                    moveOut();
+                }, 10000);
+            }
+        }, 20);
+    }
+
+    function moveOut(){
+        moveOutInterval = setInterval(()=>{
+            if(paused) return;
+
+            pos += 6;
+            cloud.style.left = pos + "px";
+
+            if(pos >= end){
+                clearInterval(moveOutInterval);
+                cloud.remove();
+            }
+        }, 20);
+    }
+
+    // Hover pause (WORKS NOW)
+    cloud.addEventListener("mouseenter", ()=> paused = true);
+    cloud.addEventListener("mouseleave", ()=> paused = false);
+
+    moveIn();
+}
 
     // Play fart sound
     playFart(sizeClass === "big" ? "big" : "small");
@@ -117,19 +172,22 @@ function createCloud(text){
     cloud.addEventListener("mouseenter", ()=>{clearInterval(moveIn);});
 }
 
-    .fart-cloud {
-    position: fixed;
-    left: -300px;
-    top: 30%;
-    background: radial-gradient(circle, #b6ffb6, #5cff5c);
-    color: black;
-    padding: 20px;
-    border-radius: 50px;
-    font-weight: bold;
-    box-shadow: 0 0 25px lime;
-    z-index: 999;
-    max-width: 260px;
-    pointer-events: none;
+    function playFart(size){
+    const small = [
+        "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
+        "https://www.myinstants.com/media/sounds/fart.mp3"
+    ];
+
+    const big = [
+        "https://www.myinstants.com/media/sounds/fart-with-reverb.mp3"
+    ];
+
+    const sounds = size === "big" ? big : small;
+
+    const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
+    audio.volume = 0.5;
+    audio.play().catch(()=>{});
+}
 }
 
 /* SCREEN SHAKE */
