@@ -95,12 +95,9 @@ button {
 <section>
 <h2>Chaos Controls</h2>
 
-<button class="moving" onclick="addJoke()">
-💨 Add Chaos
-</button>
-
-<button onclick="insultMe()">Insult Me 😈</button>
-<button onclick="toggleChaosMode()">⚠️ DO NOT CLICK</button>
+<button class="moving" id="chaosBtn">💨 Add Chaos</button>
+<button id="insultBtn">Insult Me 😈</button>
+<button id="chaosModeBtn">⚠️ DO NOT CLICK</button>
 
 <p id="insultText"></p>
 <p id="visitorCount"></p>
@@ -114,34 +111,29 @@ button {
 </section>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
 
-/* VISITORS */
-document.getElementById("visitorCount").textContent =
-"Visitors online: " + (Math.floor(Math.random()*1000)+50);
+    /* VISITORS */
+    document.getElementById("visitorCount").textContent =
+    "Visitors online: " + (Math.floor(Math.random()*1000)+50);
+
+    /* BUTTON EVENTS */
+    document.getElementById("chaosBtn").addEventListener("click", addJoke);
+    document.getElementById("insultBtn").addEventListener("click", insultMe);
+    document.getElementById("chaosModeBtn").addEventListener("click", toggleChaosMode);
+
+});
 
 /* JOKES */
 function addJoke(){
     const jokes = [
-"I tried to follow my dreams… they filed a restraining order.",
-"My brain has two modes: genius and raccoon in a trash can.",
-"I don’t make bad decisions. I make interesting mistakes.",
-"I whisper 'what the hell' at least 14 times a day.",
-"If I’m the problem… I’m at least a fun one.",
-"I put things off so well I almost never do them.",
-"I’m not lazy. I’m on energy-saving mode.",
-"My life feels like a deleted scene.",
-"I once had a plan… it died immediately.",
-"I’m emotionally supported by snacks and poor choices.",
-"I don’t rise and shine. I caffeinate and hope.",
-"Normal is just a setting on a washing machine.",
-"I have confidence. It’s just misplaced most of the time.",
-"I laugh at my own jokes because someone has to.",
-"I don’t need therapy, I need less reality.",
-"My hobbies include overthinking and avoiding things.",
-"I’d agree with you, but then we’d both be wrong.",
-"I don’t lose my mind… it wanders off without me.",
-"Life’s a mess, but at least it’s my mess.",
-"I came. I saw. I made it weird."
+        "I tried to follow my dreams… they filed a restraining order.",
+        "My brain has two modes: genius and raccoon in a trash can.",
+        "I whisper 'what the hell' at least 14 times a day.",
+        "I don’t rise and shine. I caffeinate and hope.",
+        "I laugh at my own jokes because someone has to.",
+        "My hobbies include overthinking and avoiding things.",
+        "I came. I saw. I made it weird."
     ];
 
     createCloud(jokes[Math.floor(Math.random()*jokes.length)]);
@@ -165,68 +157,44 @@ function createCloud(text){
     const center = window.innerWidth/2 - 130;
     const end = window.innerWidth + 300;
 
-    let paused = false;
-
-    // MOVE IN FAST
-    const moveIn = setInterval(()=>{
-        if(paused) return;
-
-        pos += 20;
+    const move = setInterval(()=>{
+        pos += 8;
         cloud.style.left = pos + "px";
 
-        if(pos >= center){
-            clearInterval(moveIn);
-
-            // PAUSE 10 SECONDS
-            setTimeout(()=>moveOut(), 10000);
+        if(pos >= end){
+            clearInterval(move);
+            cloud.remove();
         }
     },20);
-
-    // MOVE OUT
-    function moveOut(){
-        const moveOutInt = setInterval(()=>{
-            if(paused) return;
-
-            pos += 6;
-            cloud.style.left = pos + "px";
-
-            if(pos >= end){
-                clearInterval(moveOutInt);
-                cloud.remove();
-            }
-        },20);
-    }
-
-    // HOVER PAUSE
-    cloud.addEventListener("mouseenter", ()=> paused=true);
-    cloud.addEventListener("mouseleave", ()=> paused=false);
 }
 
 /* FART SOUND */
 function playFart(size){
-    const small=[
-        "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
-        "https://www.myinstants.com/media/sounds/fart.mp3"
-    ];
+    try {
+        const sounds = size==="big"
+            ? ["https://www.myinstants.com/media/sounds/fart-with-reverb.mp3"]
+            : [
+                "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
+                "https://www.myinstants.com/media/sounds/fart.mp3"
+            ];
 
-    const big=[
-        "https://www.myinstants.com/media/sounds/fart-with-reverb.mp3"
-    ];
-
-    const sounds = size==="big" ? big : small;
-
-    const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
-    audio.volume = 0.5;
-    audio.play().catch(()=>{});
+        const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
+        audio.volume = 0.6;
+        audio.play().catch(() => {
+            console.log("Sound blocked by browser 😢");
+        });
+    } catch(e){
+        console.log("Audio error:", e);
+    }
 }
 
 /* INSULT */
 function insultMe(){
     const insults=[
         "You fight like a dairy farmer!",
-        "Your secrets are boring.",
         "You bring joy… when you leave.",
-        "That face is a bold choice."
+        "That face is a bold choice.",
+        "You’re not useless… you could be a warning sign."
     ];
     document.getElementById("insultText").textContent =
         insults[Math.floor(Math.random()*insults.length)];
@@ -236,7 +204,6 @@ function insultMe(){
 function toggleChaosMode(){
     document.body.classList.toggle("chaos-mode");
 }
-
 </script>
 
 </body>
