@@ -1,210 +1,339 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>The Real Tommy Toots</title>
 
 <style>
+
 body {
-    margin:0;
-    font-family:"Comic Sans MS", cursive;
-    text-align:center;
-    color:white;
-    overflow-x:hidden;
-    background: linear-gradient(135deg,#1a1a1a,#333);
+
+  margin:0;
+
+  font-family:"Comic Sans MS", cursive;
+
+  text-align:center;
+
+  color:white;
+
+  background: linear-gradient(135deg,#1a1a1a,#333);
+
 }
 
-/* HEADER */
 header {
-    padding:40px 20px;
-    background:#000;
-    border-bottom:5px solid hotpink;
-    animation:headerFlash 2s infinite;
-}
-@keyframes headerFlash{
-    0%,100%{border-color:hotpink;}
-    50%{border-color:lime;}
+
+  padding:40px 20px;
+
+  background:#000;
+
+  border-bottom:5px solid hotpink;
+
 }
 
 h1 {
-    font-size:3em;
-    color:hotpink;
+
+  font-size:3em;
+
+  color:hotpink;
+
 }
 
-/* BUTTONS */
+section {
+
+  padding:30px 15px;
+
+}
+
+.joke {
+
+  background:#222;
+
+  margin:15px auto;
+
+  padding:15px;
+
+  border-radius:10px;
+
+  max-width:600px;
+
+  box-shadow:0 0 10px hotpink;
+
+  word-wrap: break-word;
+
+}
+
+.weird-box {
+
+  margin-top:20px;
+
+  padding:20px;
+
+  border:3px dashed lime;
+
+  display:inline-block;
+
+  cursor:pointer;
+
+}
+
 button {
-    padding:10px 20px;
-    border:none;
-    background:hotpink;
-    color:white;
-    border-radius:5px;
-    cursor:pointer;
-    margin:10px;
+
+  padding:10px 20px;
+
+  border:none;
+
+  background:hotpink;
+
+  color:white;
+
+  border-radius:5px;
+
+  cursor:pointer;
+
+  margin:10px;
+
 }
 
-/* MOVING BUTTON */
-.moving {
-    position:relative;
-    animation:moveButton 3s infinite alternate;
-}
-@keyframes moveButton{
-    0%{left:0;}
-    50%{left:15px;top:5px;}
-    100%{left:-15px;top:-5px;}
+footer {
+
+  padding:20px;
+
+  background:#000;
+
 }
 
-/* FART CLOUD */
-.fart-cloud {
-    position: fixed;
-    left: -300px;
-    background: radial-gradient(circle, #b6ffb6, #5cff5c);
-    color: black;
-    padding: 20px;
-    border-radius: 50px;
-    font-weight: bold;
-    box-shadow: 0 0 25px lime;
-    z-index: 999;
-    max-width: 260px;
-}
-
-.fart-small { transform: scale(0.8); }
-.fart-big { transform: scale(1.3); box-shadow:0 0 40px lime; }
-
-/* CHAOS MODE */
-.chaos-mode {
-    animation: chaosBG 0.3s infinite;
-}
-@keyframes chaosBG {
-    0% { background: red; }
-    25% { background: blue; }
-    50% { background: lime; }
-    75% { background: yellow; }
-    100% { background: purple; }
-}
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>The Real Tommy Toots</h1>
-<div>Professional nonsense distributor. Slightly unhinged.</div>
+
+<p>Professional nonsense distributor. Slightly unhinged.</p>
+
 </header>
 
-<section>
-<h2>Chaos Controls</h2>
+<!-- JOKES -->
 
-<button class="moving" id="chaosBtn">💨 Add Chaos</button>
-<button id="insultBtn">Insult Me 😈</button>
-<button id="chaosModeBtn">⚠️ DO NOT CLICK</button>
+<section id="jokeSection">
+
+<h2>Jokes / Posts</h2>
+
+<div class="joke">Life is simple: just try to make it better… or at least weirder.</div>
+
+<div class="joke">I don’t have my life together, but I do have WiFi.</div>
+
+<button onclick="addJoke(); playSound('pop'); chaosFlash();">
+
+Add More Chaos
+
+</button>
+
+<button onclick="insultMe(); chaosFlash();">
+
+Insult Me 😈
+
+</button>
 
 <p id="insultText"></p>
+
 <p id="visitorCount"></p>
+
 </section>
+
+<!-- WEIRD -->
 
 <section>
-<h2>Fuel the Chaos</h2>
-<a href="https://www.paypal.com/donate/?business=33RHGTSN9CDHE&currency_code=USD" target="_blank">
-<button>Send chaos funds 💸</button>
-</a>
+
+<h2>Something Weird</h2>
+
+<div class="weird-box" onclick="weirdMode(); playSound('weird'); chaosFlash();">
+
+Click this. You’ve been warned.
+
+</div>
+
+<p id="weirdText"></p>
+
 </section>
 
+<!-- MONEY -->
+
+<section>
+
+<h2>Fuel the Chaos</h2>
+
+<p>Supporting me keeps the chaos flowing — and a poor bastard caffeinated.</p>
+
+<a href="https://www.buymeacoffee.com/tommytoots" target="_blank">
+
+<button>Fuel the chaos ☕</button>
+
+<a href="https://www.paypal.com/donate/?business=33RHGTSN9CDHE&currency_code=USD" target="_blank">
+  <button>Send chaos funds 💸</button>
+</a>
+
+<button onclick="showTip()">Tip me if you laughed 💥</button>
+
+</section>
+
+<!-- POPUP -->
+
+<div id="tipPopup" style="display:none;">
+
+<h2>Did you laugh?</h2>
+
+<button onclick="hideTip()">Close</button>
+
+</div>
+
+<footer>© The Real Tommy Toots</footer>
+
 <script>
-document.addEventListener("DOMContentLoaded", () => {
 
-    /* VISITORS */
-    document.getElementById("visitorCount").textContent =
-    "Visitors online: " + (Math.floor(Math.random()*1000)+50);
+// ADD JOKE
 
-    /* BUTTON EVENTS */
-    document.getElementById("chaosBtn").addEventListener("click", addJoke);
-    document.getElementById("insultBtn").addEventListener("click", insultMe);
-    document.getElementById("chaosModeBtn").addEventListener("click", toggleChaosMode);
-
-});
-
-/* JOKES */
 function addJoke(){
-    const jokes = [
-        "I tried to follow my dreams… they filed a restraining order.",
-        "My brain has two modes: genius and raccoon in a trash can.",
-        "I whisper 'what the hell' at least 14 times a day.",
-        "I don’t rise and shine. I caffeinate and hope.",
-        "I laugh at my own jokes because someone has to.",
-        "My hobbies include overthinking and avoiding things.",
-        "I came. I saw. I made it weird."
-    ];
 
-    createCloud(jokes[Math.floor(Math.random()*jokes.length)]);
+  const jokes=[
+
+    "I tried to be normal once. Worst 6 minutes of my life.",
+
+    "I’m not chaotic. I’m just aggressively creative.",
+
+    "Some people have inner peace. I have inner raccoons.",
+
+    "Nothing is sacred… except naps.",
+
+    "You just made your life 3% weirder."
+
+  ];
+
+  const newJoke=document.createElement("div");
+
+  newJoke.className="joke";
+
+  newJoke.textContent=jokes[Math.floor(Math.random()*jokes.length)];
+
+  document.getElementById("jokeSection").appendChild(newJoke);
+
 }
 
-/* CLOUD SYSTEM */
-function createCloud(text){
-    const cloud = document.createElement("div");
+// WEIRD MODE
 
-    const isBig = Math.random() > 0.7;
-    cloud.className = "fart-cloud " + (isBig ? "fart-big" : "fart-small");
+function weirdMode(){
 
-    cloud.style.top = Math.random()*70 + "%";
-    cloud.innerHTML = "💨 " + text + " 💨";
+  const messages=[
 
-    document.body.appendChild(cloud);
+    "You are now legally weirder.",
 
-    playFart(isBig ? "big" : "small");
+    "A duck approves of this.",
 
-    let pos = -300;
-    const center = window.innerWidth/2 - 130;
-    const end = window.innerWidth + 300;
+    "Too late. Chaos activated."
 
-    const move = setInterval(()=>{
-        pos += 8;
-        cloud.style.left = pos + "px";
+  ];
 
-        if(pos >= end){
-            clearInterval(move);
-            cloud.remove();
-        }
-    },20);
+  document.getElementById("weirdText").textContent=
+
+    messages[Math.floor(Math.random()*messages.length)];
+
 }
 
-/* FART SOUND */
-function playFart(size){
-    try {
-        const sounds = size==="big"
-            ? ["https://www.myinstants.com/media/sounds/fart-with-reverb.mp3"]
-            : [
-                "https://www.myinstants.com/media/sounds/cartoon-fart.mp3",
-                "https://www.myinstants.com/media/sounds/fart.mp3"
-            ];
+// INSULT
 
-        const audio = new Audio(sounds[Math.floor(Math.random()*sounds.length)]);
-        audio.volume = 0.6;
-        audio.play().catch(() => {
-            console.log("Sound blocked by browser 😢");
-        });
-    } catch(e){
-        console.log("Audio error:", e);
-    }
-}
-
-/* INSULT */
 function insultMe(){
-    const insults=[
-        "You fight like a dairy farmer!",
-        "You bring joy… when you leave.",
-        "That face is a bold choice.",
-        "You’re not useless… you could be a warning sign."
-    ];
-    document.getElementById("insultText").textContent =
-        insults[Math.floor(Math.random()*insults.length)];
+
+  const insults=[
+
+    "You fight like a dairy farmer!",
+
+    "Your secrets are boring.",
+
+    "You bring joy… when you leave."
+
+  ];
+
+  document.getElementById("insultText").textContent=
+
+    insults[Math.floor(Math.random()*insults.length)];
+
 }
 
-/* CHAOS MODE */
-function toggleChaosMode(){
-    document.body.classList.toggle("chaos-mode");
+// SOUND (WORKING VERSION)
+
+function playSound(type){
+
+  try {
+
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const osc = ctx.createOscillator();
+
+    const gain = ctx.createGain();
+
+    osc.type = "square";
+
+    osc.frequency.value = type === "weird" ? 200 : 600;
+
+    osc.connect(gain);
+
+    gain.connect(ctx.destination);
+
+    gain.gain.setValueAtTime(1, ctx.currentTime);
+
+    osc.start();
+
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+    osc.stop(ctx.currentTime + 0.25);
+
+  } catch(e){}
+
 }
+
+// COLOR FLASH
+
+function chaosFlash(){
+
+  const colors=["#ff00ff","#00ffff","#ffff00","#ff6600","#00ff00"];
+
+  document.body.style.background=
+
+    colors[Math.floor(Math.random()*colors.length)];
+
+}
+
+// VISITOR COUNT
+
+document.getElementById("visitorCount").textContent=
+
+"Visitors online: " + (Math.floor(Math.random()*500)+50);
+
+// POPUP
+
+function showTip(){
+
+  document.getElementById("tipPopup").style.display="block";
+
+}
+
+function hideTip(){
+
+  document.getElementById("tipPopup").style.display="none";
+
+}
+
 </script>
 
 </body>
+
 </html>
